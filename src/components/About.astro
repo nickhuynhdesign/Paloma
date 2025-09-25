@@ -1,0 +1,136 @@
+---
+import { Image } from "astro:assets";
+import abt1 from "../public/images/abt1.png";
+import abt2 from "../public/images/abt2.png";
+import abt3 from "../public/images/abt3.png";
+import abt4 from "../public/images/abt4.png";
+import abt5 from "../public/images/abt5.png";
+---
+
+<>
+  <section id="about">
+    <div class="mb-16 md:px-0 px-5">
+      <div class="content">
+        <div class="md:col-span-8">
+          <p class="badge">Best Cocktails</p>
+          <h2>
+            Where every detail matters <span class="text-white">-</span>
+            from muddle to garnish
+          </h2>
+        </div>
+
+        <div class="sub-content">
+          <p>
+            Every cocktail we serve is a reflection of our obsession with detail
+            — from the first muddle to the final garnish. That care is what
+            turns a simple drink into something truly memorable.
+          </p>
+
+          <div>
+            <p class="md:text-3xl text-xl font-bold">
+              <span>4.5</span>/5
+            </p>
+            <p class="text-sm text-white-100">More than +12000 customers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="top-grid">
+      <div class="md:col-span-3">
+        <div class="noisy"></div>
+        <Image src={abt1} alt="grid-img-1" />
+      </div>
+
+      <div class="md:col-span-6">
+        <div class="noisy"></div>
+        <Image src={abt2} alt="grid-img-2" />
+      </div>
+
+      <div class="md:col-span-3">
+        <div class="noisy"></div>
+        <Image src={abt5} alt="grid-img-5" />
+      </div>
+    </div>
+
+    <div class="bottom-grid">
+      <div class="md:col-span-8">
+        <div class="noisy"></div>
+        <Image src={abt3} alt="grid-img-3" />
+      </div>
+
+      <div class="md:col-span-4">
+        <div class="noisy"></div>
+        <Image src={abt4} alt="grid-img-4" />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { gsap } from "gsap";
+    import { SplitText } from "gsap/SplitText";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(SplitText, ScrollTrigger);
+
+    // Wait for DOM to be ready
+    document.addEventListener("DOMContentLoaded", () => {
+      // Check if the about section and h2 element exist
+      const aboutSection = document.querySelector("#about");
+      const aboutH2 = document.querySelector("#about h2");
+      const topGridElements = document.querySelectorAll(".top-grid div");
+      const bottomGridElements = document.querySelectorAll(".bottom-grid div");
+
+      if (!aboutSection || !aboutH2) {
+        console.warn("About section or h2 element not found");
+        return;
+      }
+
+      try {
+        // Create SplitText instance
+        const titleSplit = new SplitText(aboutH2, {
+          type: "words",
+        });
+
+        // Check if SplitText created words successfully
+        if (!titleSplit.words || titleSplit.words.length === 0) {
+          console.warn("SplitText failed to create words from h2 element");
+          return;
+        }
+
+        // Create scroll timeline
+        const scrollTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: aboutSection,
+            start: "top center",
+          },
+        });
+
+        // Animate title words
+        scrollTimeline.from(titleSplit.words, {
+          opacity: 0,
+          yPercent: 100,
+          duration: 1,
+          ease: "expo.out",
+          stagger: 0.2,
+        });
+
+        // Animate grid elements if they exist
+        const gridElements = [...topGridElements, ...bottomGridElements];
+        if (gridElements.length > 0) {
+          scrollTimeline.from(
+            gridElements,
+            {
+              opacity: 0,
+              duration: 1,
+              ease: "power1.inOut",
+              stagger: 0.04,
+            },
+            "-=0.5"
+          );
+        }
+      } catch (error) {
+        console.error("Error setting up about section animations:", error);
+      }
+    });
+  </script>
+</>
