@@ -1,0 +1,130 @@
+---
+import { Image } from "astro:assets";
+import footerRightLeafImage from "../public/images/footer-right-leaf.png";
+import footerLeftLeafImage from "../public/images/footer-left-leaf.png";
+import instaImage from "../public/images/insta.png";
+import xImage from "../public/images/x.png";
+import fbImage from "../public/images/fb.png";
+import { openingHours, socials } from "../data/navigation";
+---
+
+<>
+  <footer id="contact">
+    <Image src={footerRightLeafImage} alt="leaf-right" id="f-right-leaf" />
+    <Image src={footerLeftLeafImage} alt="leaf-left" id="f-left-leaf" />
+
+    <div class="content">
+      <h2>Where to Find Us</h2>
+
+      <div>
+        <h3>Visit Our Bar</h3>
+        <p>456, Raq Blvd. #404, Los Angeles, CA 90210</p>
+      </div>
+
+      <div>
+        <h3>Contact Us</h3>
+        <p>(555) 987-6543</p>
+        <p>hello@jsmcocktail.com</p>
+      </div>
+
+      <div>
+        <h3>Open Every Day</h3>
+        {
+          openingHours.map((time) => (
+            <p>
+              {time.day} : {time.time}
+            </p>
+          ))
+        }
+      </div>
+
+      <div>
+        <h3>Socials</h3>
+
+        <div class="flex-center gap-5">
+          {
+            socials.map((social) => (
+              <a
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+              >
+                {social.name === "Instagram" && (
+                  <Image src={instaImage} alt={social.name} />
+                )}
+                {social.name === "X (Twitter)" && (
+                  <Image src={xImage} alt={social.name} />
+                )}
+                {social.name === "Facebook" && (
+                  <Image src={fbImage} alt={social.name} />
+                )}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("Contact component loaded");
+
+      // Simple CSS animations instead of GSAP
+      const title = document.querySelector("#contact h2");
+      const headings = document.querySelectorAll("#contact h3");
+      const paragraphs = document.querySelectorAll("#contact p");
+      const rightLeaf = document.querySelector("#f-right-leaf");
+      const leftLeaf = document.querySelector("#f-left-leaf");
+
+      // Animate title
+      if (title) {
+        (title as HTMLElement).style.opacity = "0";
+        (title as HTMLElement).style.transform = "translateY(30px)";
+        (title as HTMLElement).style.transition =
+          "opacity 1s ease, transform 1s ease";
+
+        setTimeout(() => {
+          (title as HTMLElement).style.opacity = "1";
+          (title as HTMLElement).style.transform = "translateY(0)";
+        }, 200);
+      }
+
+      // Animate headings and paragraphs
+      [...headings, ...paragraphs].forEach((element, index) => {
+        (element as HTMLElement).style.opacity = "0";
+        (element as HTMLElement).style.transform = "translateY(30px)";
+        (element as HTMLElement).style.transition =
+          "opacity 0.8s ease, transform 0.8s ease";
+
+        setTimeout(
+          () => {
+            (element as HTMLElement).style.opacity = "1";
+            (element as HTMLElement).style.transform = "translateY(0)";
+          },
+          400 + index * 100
+        );
+      });
+
+      // Animate leaves
+      if (rightLeaf) {
+        (rightLeaf as HTMLElement).style.transform = "translateY(0)";
+        (rightLeaf as HTMLElement).style.transition = "transform 1s ease";
+
+        setTimeout(() => {
+          (rightLeaf as HTMLElement).style.transform = "translateY(-50px)";
+        }, 800);
+      }
+
+      if (leftLeaf) {
+        (leftLeaf as HTMLElement).style.transform = "translateY(0)";
+        (leftLeaf as HTMLElement).style.transition = "transform 1s ease";
+
+        setTimeout(() => {
+          (leftLeaf as HTMLElement).style.transform = "translateY(-50px)";
+        }, 800);
+      }
+    });
+  </script>
+</>
