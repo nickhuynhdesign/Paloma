@@ -14,7 +14,7 @@ const { title = "Juniper" } = Astro.props;
 <nav>
   <div>
     <a href="#home" class="flex items-center gap2">
-      <Image src={logoImage} alt="Juniper" width={32} height={32} />
+      <Image src={logoImage} alt="Juniper" />
       <p>Juniper</p>
     </a>
     <ul>
@@ -29,26 +29,31 @@ const { title = "Juniper" } = Astro.props;
   </div>
 </nav>
 
-<script is:inline>
+<script>
   import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-  const navTween = gsap.timeline({
-    scrollTrigger: {
-      trigger: "nav",
-      start: "bottom top",
-    },
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const navTween = gsap.timeline({
+      scrollTrigger: {
+        trigger: "nav",
+        start: "bottom top",
+      },
+    });
+
+    navTween.fromTo(
+      "nav",
+      {
+        backgroundColor: "transparent",
+      },
+      {
+        backgroundColor: "#00000050",
+        backdropFilter: "blur(10px)",
+        duration: 1,
+        ease: "power1.out",
+      }
+    );
   });
-
-  navTween.fromTo(
-    "nav",
-    {
-      backgroundColor: "transparent",
-    },
-    {
-      backgroundColor: "#00000050",
-      backdropFilter: "blur(10px)",
-      duration: 1,
-      ease: "power1.out",
-    }
-  );
 </script>
