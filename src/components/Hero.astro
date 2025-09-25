@@ -4,97 +4,177 @@ import leftLeafImage from "../public/images/hero-left-leaf.png";
 import rightLeafImage from "../public/images/hero-right-leaf.png";
 ---
 
-<section id="hero" class="noisy">
-  <h1 class="title">Juniper</h1>
-  <Image src={leftLeafImage} alt="left-leaf" class="left-leaf" />
-  <Image src={rightLeafImage} alt="right-leaf" class="right-leaf" />
-  <div class="body">
-    <div class="content">
-      <div class="space-y-5 hidden md:block">
-        <p>Cool. Crisp. Classic.</p>
-        <p class="subtitle">
-          Sip the Spirit <br /> of Summer
-        </p>
-      </div>
-      <div class="view-cocktails">
-        <p class="subtitle">
-          Every cocktail on our menu is a blend of premium ingredients, creative
-          flair, and timeless recipes — designed to delight your senses.
-        </p>
-        <a href="#cocktails">View Cocktails</a>
+<>
+  <section id="hero" class="noisy relative z-10">
+    <h1 class="title">Juniper</h1>
+    <Image src={leftLeafImage} alt="left-leaf" class="left-leaf" />
+    <Image src={rightLeafImage} alt="right-leaf" class="right-leaf" />
+    <div class="body">
+      <div class="content">
+        <div class="space-y-5 hidden md:block">
+          <p>Cool. Crisp. Classic.</p>
+          <p class="subtitle">
+            Sip the Spirit <br /> of Summer
+          </p>
+        </div>
+        <div class="view-cocktails">
+          <p class="subtitle">
+            Every cocktail on our menu is a blend of premium ingredients,
+            creative flair, and timeless recipes — designed to delight your
+            senses.
+          </p>
+          <a href="#cocktails">View Cocktails</a>
+        </div>
       </div>
     </div>
+  </section>
+  <div class="video fixed inset-0 z-0 w-full h-full">
+    <video
+      id="hero-video"
+      src="/videos/output.mp4"
+      muted
+      playsinline
+      preload="auto"
+      class="w-full h-full object-cover scale-90"
+    >
+    </video>
   </div>
-</section>
 
-<script>
-  import { gsap } from "gsap";
-  import { SplitText } from "gsap/SplitText";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  <script>
+    import { gsap } from "gsap";
+    import { SplitText } from "gsap/SplitText";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-  gsap.registerPlugin(SplitText, ScrollTrigger);
+    gsap.registerPlugin(SplitText, ScrollTrigger);
 
-  // Use a more robust approach for Astro
-  function initAnimations() {
-    const heroSplitText = new SplitText(".title", {
-      type: "chars, words",
-    });
+    // Mobile detection function
+    function isMobile() {
+      return window.matchMedia("(max-width: 768px)").matches;
+    }
 
-    const paragraphSplitText = new SplitText(".subtitle", {
-      type: "lines",
-    });
+    // Video handling
+    function handleVideo() {
+      const video = document.getElementById("hero-video") as HTMLVideoElement;
+      if (video) {
+        console.log("Video element found:", video);
+        console.log("Video src:", video.src);
+        console.log("Video current time:", video.currentTime);
 
-    heroSplitText.chars.forEach((char) => char.classList.add("text-gradient"));
+        // Ensure video is paused initially
+        video.pause();
+        video.currentTime = 0;
 
-    gsap.from(heroSplitText.chars, {
-      yPercent: 100,
-      duration: 1.5,
-      ease: "expo.out",
-      stagger: 0.06,
-    });
+        // Ensure video is ready for scroll synchronization
+        video.addEventListener("loadedmetadata", () => {
+          console.log("Video metadata loaded, duration:", video.duration);
+          console.log(
+            "Video dimensions:",
+            video.videoWidth,
+            "x",
+            video.videoHeight
+          );
+          // Ensure video starts at the beginning
+          video.currentTime = 0;
+          video.pause();
 
-    gsap.from(paragraphSplitText.lines, {
-      opacity: 0,
-      yPercent: 100,
-      duration: 1.8,
-      ease: "expo.out",
-      stagger: 0.06,
-      delay: 0.1,
-    });
+          // Refresh ScrollTrigger after video is loaded
+          ScrollTrigger.refresh();
+        });
+      } else {
+        console.error("Video element not found!");
+      }
+    }
 
-    // Test if elements exist
-    const leftLeaf = document.querySelector(".left-leaf");
-    const rightLeaf = document.querySelector(".right-leaf");
-    const hero = document.querySelector("#hero");
+    // Use a more robust approach for Astro
+    function initAnimations() {
+      const heroSplitText = new SplitText(".title", {
+        type: "chars, words",
+      });
 
-    console.log("Elements found:", { leftLeaf, rightLeaf, hero });
+      const paragraphSplitText = new SplitText(".subtitle", {
+        type: "lines",
+      });
 
-    if (leftLeaf && rightLeaf && hero) {
-      console.log("All elements found, creating animation...");
+      heroSplitText.chars.forEach((char) =>
+        char.classList.add("text-gradient")
+      );
 
-      gsap
-        .timeline({
-          scrollTrigger: {
+      gsap.from(heroSplitText.chars, {
+        yPercent: 100,
+        duration: 1.5,
+        ease: "expo.out",
+        stagger: 0.06,
+      });
+
+      gsap.from(paragraphSplitText.lines, {
+        opacity: 0,
+        yPercent: 100,
+        duration: 1.8,
+        ease: "expo.out",
+        stagger: 0.06,
+        delay: 0.1,
+      });
+
+      // Test if elements exist
+      const leftLeaf = document.querySelector(".left-leaf");
+      const rightLeaf = document.querySelector(".right-leaf");
+      const hero = document.querySelector("#hero");
+
+      console.log("Elements found:", { leftLeaf, rightLeaf, hero });
+
+      if (leftLeaf && rightLeaf && hero) {
+        console.log("All elements found, creating animation...");
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: "#hero",
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+              onUpdate: () => console.log("ScrollTrigger updating"),
+              onToggle: (self) =>
+                console.log("ScrollTrigger toggled:", self.isActive),
+            },
+          })
+          .to(".right-leaf", { y: 200 }, 0)
+          .to(".left-leaf", { y: -200 }, 0);
+
+        const startValue = isMobile() ? "top 50%" : "center 60%";
+        const endValue = isMobile() ? "120% top" : "bottom top";
+
+        // Get video element by ID
+        const video = document.getElementById("hero-video") as HTMLVideoElement;
+
+        if (video) {
+          // Set up scroll-triggered video animation
+          ScrollTrigger.create({
             trigger: "#hero",
             start: "top top",
             end: "bottom top",
-            scrub: true,
-            onUpdate: () => console.log("ScrollTrigger updating"),
-            onToggle: (self) =>
-              console.log("ScrollTrigger toggled:", self.isActive),
-          },
-        })
-        .to(".right-leaf", { y: 200 }, 0)
-        .to(".left-leaf", { y: -200 }, 0);
-    } else {
-      console.error("Missing elements for animation");
+            scrub: 1,
+            onUpdate: (self) => {
+              // Ensure video is ready before updating
+              if (video.duration) {
+                video.currentTime = video.duration * self.progress;
+              }
+            },
+          });
+        }
+      } else {
+        console.error("Missing elements for animation");
+      }
     }
-  }
 
-  // Try multiple approaches to ensure the script runs
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAnimations);
-  } else {
-    initAnimations();
-  }
-</script>
+    // Try multiple approaches to ensure the script runs
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        initAnimations();
+        handleVideo();
+      });
+    } else {
+      initAnimations();
+      handleVideo();
+    }
+  </script>
+</>
