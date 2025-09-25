@@ -1,0 +1,219 @@
+---
+import { Image } from "astro:assets";
+import leftLeafImage from "../public/images/slider-left-leaf.png";
+import rightLeafImage from "../public/images/slider-right-leaf.png";
+import rightArrowImage from "../public/images/right-arrow.png";
+import leftArrowImage from "../public/images/left-arrow.png";
+import drink1Image from "../public/images/drink1.png";
+import drink2Image from "../public/images/drink2.png";
+import drink3Image from "../public/images/drink3.png";
+import drink4Image from "../public/images/drink4.png";
+import { allCocktails } from "../data/navigation";
+---
+
+<>
+  <section id="menu" aria-labelledby="menu-heading">
+    <Image src={leftLeafImage} alt="left-leaf" id="m-left-leaf" />
+    <Image src={rightLeafImage} alt="right-leaf" id="m-right-leaf" />
+
+    <h2 id="menu-heading" class="sr-only">Cocktail Menu</h2>
+
+    <nav class="cocktail-tabs" aria-label="Cocktail Navigation">
+      {
+        allCocktails.map((cocktail, index) => (
+          <button
+            class={`cocktail-tab ${index === 0 ? "active" : ""}`}
+            data-index={index}
+          >
+            {cocktail.name}
+          </button>
+        ))
+      }
+    </nav>
+
+    <div class="content">
+      <div class="arrows">
+        <button class="text-left prev-arrow" data-direction="prev">
+          <span class="prev-cocktail-name"
+            >{allCocktails[allCocktails.length - 1].name}</span
+          >
+          <Image src={rightArrowImage} alt="right-arrow" aria-hidden="true" />
+        </button>
+
+        <button class="text-left next-arrow" data-direction="next">
+          <span class="next-cocktail-name">{allCocktails[1].name}</span>
+          <Image src={leftArrowImage} alt="left-arrow" aria-hidden="true" />
+        </button>
+      </div>
+
+      <div class="cocktail">
+        <Image
+          src={drink1Image}
+          class="object-contain cocktail-image cocktail-image-0"
+          alt="Classic Mojito"
+        />
+        <Image
+          src={drink2Image}
+          class="object-contain cocktail-image cocktail-image-1"
+          alt="Raspberry Mojito"
+          style="display: none;"
+        />
+        <Image
+          src={drink3Image}
+          class="object-contain cocktail-image cocktail-image-2"
+          alt="Violet Breeze"
+          style="display: none;"
+        />
+        <Image
+          src={drink4Image}
+          class="object-contain cocktail-image cocktail-image-3"
+          alt="Curacao Mojito"
+          style="display: none;"
+        />
+      </div>
+
+      <div class="recipe">
+        <div class="info">
+          <p>Recipe for:</p>
+          <p id="title">{allCocktails[0].name}</p>
+        </div>
+
+        <div class="details">
+          <h2 class="cocktail-title">{allCocktails[0].title}</h2>
+          <p class="cocktail-description">{allCocktails[0].description}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script define:vars={{ allCocktails }}>
+    console.log("=== MENU SCRIPT STARTING ===");
+    console.log("allCocktails:", allCocktails);
+
+    // Initialize state
+    let currentIndex = 0;
+    const totalCocktails = allCocktails.length;
+    const cocktails = allCocktails;
+
+    console.log("Script initialized - totalCocktails:", totalCocktails);
+
+    // Helper functions
+    function getCocktailAt(indexOffset) {
+      return cocktails[
+        (currentIndex + indexOffset + totalCocktails) % totalCocktails
+      ];
+    }
+
+    function goToSlide(index) {
+      console.log("goToSlide called with index:", index);
+      const newIndex = (index + totalCocktails) % totalCocktails;
+      console.log("Calculated newIndex:", newIndex);
+      currentIndex = newIndex;
+      console.log("Updated currentIndex to:", currentIndex);
+
+      // Update UI
+      updateCocktailDisplay();
+      updateTabStates();
+      updateArrowLabels();
+      animateContent();
+    }
+
+    function updateCocktailDisplay() {
+      const currentCocktail = getCocktailAt(0);
+      console.log("updateCocktailDisplay - currentCocktail:", currentCocktail);
+
+      const title = document.querySelector("#title");
+      const cocktailTitle = document.querySelector(".cocktail-title");
+      const cocktailDescription = document.querySelector(
+        ".cocktail-description"
+      );
+
+      // Hide all cocktail images
+      const allCocktailImages = document.querySelectorAll(".cocktail-image");
+      console.log("Found cocktail images:", allCocktailImages.length);
+      allCocktailImages.forEach((img) => {
+        img.style.display = "none";
+      });
+
+      // Show the current cocktail image
+      const currentCocktailImage = document.querySelector(
+        `.cocktail-image-${currentIndex}`
+      );
+      console.log(
+        "Looking for image with class:",
+        `.cocktail-image-${currentIndex}`
+      );
+      console.log("Found current cocktail image:", !!currentCocktailImage);
+      if (currentCocktailImage) {
+        currentCocktailImage.style.display = "block";
+      }
+
+      if (title) title.textContent = currentCocktail.name;
+      if (cocktailTitle) cocktailTitle.textContent = currentCocktail.title;
+      if (cocktailDescription)
+        cocktailDescription.textContent = currentCocktail.description;
+    }
+
+    function updateTabStates() {
+      const tabs = document.querySelectorAll(".cocktail-tab");
+      tabs.forEach((tab, index) => {
+        tab.classList.toggle("active", index === currentIndex);
+      });
+    }
+
+    function updateArrowLabels() {
+      const prevCocktail = getCocktailAt(-1);
+      const nextCocktail = getCocktailAt(1);
+
+      const prevName = document.querySelector(".prev-cocktail-name");
+      const nextName = document.querySelector(".next-cocktail-name");
+
+      if (prevName) prevName.textContent = prevCocktail.name;
+      if (nextName) nextName.textContent = nextCocktail.name;
+    }
+
+    function animateContent() {
+      console.log("animateContent called - no animations for now");
+      // No animations for now - just focus on functionality
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("Menu DOM loaded - setting up carousel");
+
+      // Tab navigation
+      const tabs = document.querySelectorAll(".cocktail-tab");
+      console.log("Found tabs:", tabs.length);
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => {
+          console.log("Tab clicked:", index);
+          goToSlide(index);
+        });
+      });
+
+      // Arrow navigation
+      document.addEventListener("click", (e) => {
+        console.log("Click detected:", e.target);
+        if (e.target.closest(".prev-arrow")) {
+          console.log("Prev arrow clicked, currentIndex:", currentIndex);
+          e.preventDefault();
+          const newIndex = (currentIndex - 1 + totalCocktails) % totalCocktails;
+          console.log("Going to index:", newIndex);
+          goToSlide(newIndex);
+        }
+        if (e.target.closest(".next-arrow")) {
+          console.log("Next arrow clicked, currentIndex:", currentIndex);
+          e.preventDefault();
+          const newIndex = (currentIndex + 1) % totalCocktails;
+          console.log("Going to index:", newIndex);
+          goToSlide(newIndex);
+        }
+      });
+
+      // Initialize UI
+      console.log("Initializing UI...");
+      updateTabStates();
+      updateArrowLabels();
+      console.log("UI initialization complete");
+    });
+  </script>
+</>
