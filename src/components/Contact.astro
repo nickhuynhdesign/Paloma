@@ -68,62 +68,153 @@ import { openingHours, socials } from "../data/navigation";
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    // Load GSAP from CDN
+    function loadGSAP() {
+      return new Promise((resolve) => {
+        if ((window as any).gsap) {
+          resolve((window as any).gsap);
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
+        script.onload = () => {
+          const scrollTriggerScript = document.createElement("script");
+          scrollTriggerScript.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js";
+          scrollTriggerScript.onload = () => {
+            const splitTextScript = document.createElement("script");
+            splitTextScript.src =
+              "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js";
+            splitTextScript.onload = () => {
+              resolve((window as any).gsap);
+            };
+            document.head.appendChild(splitTextScript);
+          };
+          document.head.appendChild(scrollTriggerScript);
+        };
+        document.head.appendChild(script);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
       console.log("Contact component loaded");
 
-      // Simple CSS animations instead of GSAP
-      const title = document.querySelector("#contact h2");
-      const headings = document.querySelectorAll("#contact h3");
-      const paragraphs = document.querySelectorAll("#contact p");
-      const rightLeaf = document.querySelector("#f-right-leaf");
-      const leftLeaf = document.querySelector("#f-left-leaf");
+      try {
+        const gsap = (await loadGSAP()) as any;
 
-      // Animate title
-      if (title) {
-        (title as HTMLElement).style.opacity = "0";
-        (title as HTMLElement).style.transform = "translateY(30px)";
-        (title as HTMLElement).style.transition =
-          "opacity 1s ease, transform 1s ease";
+        // Register plugins
+        gsap.registerPlugin(gsap.ScrollTrigger);
 
-        setTimeout(() => {
-          (title as HTMLElement).style.opacity = "1";
-          (title as HTMLElement).style.transform = "translateY(0)";
-        }, 200);
-      }
+        // Create SplitText effect manually since we can't use the plugin
+        const title = document.querySelector("#contact h2");
+        if (title) {
+          const text = title.textContent || "";
+          const words = text.split(" ");
+          title.innerHTML = words
+            .map((word) => `<span class="word">${word}</span>`)
+            .join(" ");
+        }
 
-      // Animate headings and paragraphs
-      [...headings, ...paragraphs].forEach((element, index) => {
-        (element as HTMLElement).style.opacity = "0";
-        (element as HTMLElement).style.transform = "translateY(30px)";
-        (element as HTMLElement).style.transition =
-          "opacity 0.8s ease, transform 0.8s ease";
-
-        setTimeout(
-          () => {
-            (element as HTMLElement).style.opacity = "1";
-            (element as HTMLElement).style.transform = "translateY(0)";
+        // Create timeline with ScrollTrigger
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#contact",
+            start: "top center",
           },
-          400 + index * 100
-        );
-      });
+          ease: "power1.inOut",
+        });
 
-      // Animate leaves
-      if (rightLeaf) {
-        (rightLeaf as HTMLElement).style.transform = "translateY(0)";
-        (rightLeaf as HTMLElement).style.transition = "transform 1s ease";
+        // Animate title words
+        timeline.from("#contact h2 .word", {
+          opacity: 0,
+          yPercent: 100,
+          stagger: 0.02,
+        });
 
-        setTimeout(() => {
-          (rightLeaf as HTMLElement).style.transform = "translateY(-50px)";
-        }, 800);
-      }
+        // Animate headings and paragraphs
+        timeline.from("#contact h3, #contact p", {
+          opacity: 0,
+          yPercent: 100,
+          stagger: 0.02,
+        });
 
-      if (leftLeaf) {
-        (leftLeaf as HTMLElement).style.transform = "translateY(0)";
-        (leftLeaf as HTMLElement).style.transition = "transform 1s ease";
+        // Animate leaves
+        timeline
+          .to("#f-right-leaf", {
+            y: -50,
+            duration: 1,
+            ease: "power1.inOut",
+          })
+          .to(
+            "#f-left-leaf",
+            {
+              y: -50,
+              duration: 1,
+              ease: "power1.inOut",
+            },
+            "<"
+          );
 
-        setTimeout(() => {
-          (leftLeaf as HTMLElement).style.transform = "translateY(-50px)";
-        }, 800);
+        console.log("GSAP animations initialized");
+      } catch (error) {
+        console.error("Error loading GSAP:", error);
+
+        // Fallback to CSS animations
+        const title = document.querySelector("#contact h2");
+        const headings = document.querySelectorAll("#contact h3");
+        const paragraphs = document.querySelectorAll("#contact p");
+        const rightLeaf = document.querySelector("#f-right-leaf");
+        const leftLeaf = document.querySelector("#f-left-leaf");
+
+        // Animate title
+        if (title) {
+          (title as HTMLElement).style.opacity = "0";
+          (title as HTMLElement).style.transform = "translateY(30px)";
+          (title as HTMLElement).style.transition =
+            "opacity 1s ease, transform 1s ease";
+
+          setTimeout(() => {
+            (title as HTMLElement).style.opacity = "1";
+            (title as HTMLElement).style.transform = "translateY(0)";
+          }, 200);
+        }
+
+        // Animate headings and paragraphs
+        [...headings, ...paragraphs].forEach((element, index) => {
+          (element as HTMLElement).style.opacity = "0";
+          (element as HTMLElement).style.transform = "translateY(30px)";
+          (element as HTMLElement).style.transition =
+            "opacity 0.8s ease, transform 0.8s ease";
+
+          setTimeout(
+            () => {
+              (element as HTMLElement).style.opacity = "1";
+              (element as HTMLElement).style.transform = "translateY(0)";
+            },
+            400 + index * 100
+          );
+        });
+
+        // Animate leaves
+        if (rightLeaf) {
+          (rightLeaf as HTMLElement).style.transform = "translateY(0)";
+          (rightLeaf as HTMLElement).style.transition = "transform 1s ease";
+
+          setTimeout(() => {
+            (rightLeaf as HTMLElement).style.transform = "translateY(-50px)";
+          }, 800);
+        }
+
+        if (leftLeaf) {
+          (leftLeaf as HTMLElement).style.transform = "translateY(0)";
+          (leftLeaf as HTMLElement).style.transition = "transform 1s ease";
+
+          setTimeout(() => {
+            (leftLeaf as HTMLElement).style.transform = "translateY(-50px)";
+          }, 800);
+        }
       }
     });
   </script>
