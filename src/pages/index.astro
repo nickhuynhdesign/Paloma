@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import NavBar from "../components/NavBar.astro";
 ---
 
 <html lang="en">
@@ -11,8 +12,8 @@ import "../styles/global.css";
     <title>Paloma</title>
   </head>
   <body>
-    <main class="flex-center h-[100vh]">
-      <h1 class="text-3xl text-indigo-300">Hello!</h1>
+    <main class="h-[100vh]">
+      <NavBar title="Paloma" />
     </main>
     <script is:inline>
       import gsap from "gsap";

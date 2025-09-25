@@ -1,0 +1,54 @@
+---
+import { Image } from "astro:assets";
+import { navLinks } from "../data/navigation";
+import logoImage from "../public/images/logo.png";
+
+// NavBar component props
+export interface Props {
+  title?: string;
+}
+
+const { title = "Juniper" } = Astro.props;
+---
+
+<nav>
+  <div>
+    <a href="#home" class="flex items-center gap2">
+      <Image src={logoImage} alt="Juniper" width={32} height={32} />
+      <p>Juniper</p>
+    </a>
+    <ul>
+      {
+        navLinks.map((item) => (
+          <li>
+            <a href={item.id}>{item.title}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>
+
+<script is:inline>
+  import { gsap } from "gsap";
+
+  const navTween = gsap.timeline({
+    scrollTrigger: {
+      trigger: "nav",
+      start: "bottom top",
+    },
+  });
+
+  navTween.fromTo(
+    "nav",
+    {
+      backgroundColor: "transparent",
+    },
+    {
+      backgroundColor: "#00000050",
+      backdropFilter: "blur(10px)",
+      duration: 1,
+      ease: "power1.out",
+    }
+  );
+</script>
