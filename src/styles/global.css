@@ -286,6 +286,10 @@ body {
 
       button {
         @apply md:text-3xl text-xl pb-2 cursor-pointer hover:text-yellow hover:border-yellow border-b transition-colors font-modern-negra;
+
+        &.active {
+          @apply text-yellow border-yellow;
+        }
       }
     }
 
