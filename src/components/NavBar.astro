@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { navLinks } from "../data/navigation";
-import logoImage from "../public/images/logo.png";
+import logoImage from "../../public/logo.svg";
 
 // NavBar component props
 export interface Props {
@@ -13,15 +13,15 @@ const { title = "Juniper" } = Astro.props;
 
 <nav>
   <div>
-    <a href="#home" class="flex items-center gap2">
-      <Image src={logoImage} alt="Juniper" />
+    <a href="#hero" class="flex items-center gap-2">
+      <Image src={logoImage} alt="Juniper" width={32} height={32} />
       <p>Juniper</p>
     </a>
     <ul>
       {
         navLinks.map((item) => (
           <li>
-            <a href={item.id}>{item.title}</a>
+            <a href={`#${item.id}`}>{item.title}</a>
           </li>
         ))
       }
@@ -55,5 +55,24 @@ const { title = "Juniper" } = Astro.props;
         ease: "power1.out",
       }
     );
+
+    // Smooth scrolling for navigation links
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    navLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href");
+        if (targetId) {
+          const targetElement = document.querySelector(targetId);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }
+      });
+    });
   });
 </script>

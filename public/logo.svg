@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+    <title id="title">Juniper Sprig — Circular Badge</title>
+    <desc id="desc">A circular badge with a stylized juniper sprig centered inside.</desc>
+  
+    <!-- ===== THEME VARIABLES (edit these) ===== -->
+    <style>
+      :root{
+        --bg: #0b1f1d;            /* badge background */
+        --ring: #1f4d46;          /* outer ring color */
+        --juniper-deep: #1c6b5f;  /* stem */
+        --juniper-needle: #2fa189;/* needles */
+        --juniper-berry: #2d3a8c; /* berries base */
+        --juniper-berry-hi: #4657c7; /* berries highlight */
+      }
+    </style>
+  
+    <!-- Background circle -->
+    <circle cx="128" cy="128" r="122" fill="var(--bg)"/>
+  
+    <!-- Optional ring (toggle stroke-width to 0 to hide) -->
+    <circle cx="128" cy="128" r="118" fill="none" stroke="var(--ring)" stroke-width="4"/>
+  
+    <!-- Sprig (scaled & centered) -->
+    <g transform="translate(128,128) scale(2.4) translate(-20,-32)">
+      <!-- stem -->
+      <path d="M8 56 C 14 36, 22 24, 30 8"
+            fill="none" stroke="var(--juniper-deep)" stroke-width="3.5" stroke-linecap="round"/>
+  
+      <!-- side needles -->
+      <path d="M14 44 l-14 -8" fill="none" stroke="var(--juniper-needle)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M18 36 l-16 -6" fill="none" stroke="var(--juniper-needle)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M24 26 l-14 -6" fill="none" stroke="var(--juniper-needle)" stroke-width="3" stroke-linecap="round"/>
+  
+      <!-- upper needles -->
+      <path d="M26 22 l10 -10" fill="none" stroke="var(--juniper-needle)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M22 30 l12 -6" fill="none" stroke="var(--juniper-needle)" stroke-width="3" stroke-linecap="round"/>
+  
+      <!-- berries -->
+      <g>
+        <circle cx="20" cy="44" r="6.6" fill="var(--juniper-berry)"/>
+        <circle cx="30" cy="34" r="7.4" fill="var(--juniper-berry-hi)"/>
+        <circle cx="14" cy="30" r="5.6" fill="var(--juniper-berry)"/>
+        <circle cx="28" cy="31.5" r="2" fill="#ffffff" opacity="0.35"/>
+        <circle cx="18" cy="42" r="1.6" fill="#ffffff" opacity="0.35"/>
+      </g>
+    </g>
+  </svg>
+  
